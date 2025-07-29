@@ -5,7 +5,7 @@ class HumanFormats {
     return NumberFormat.compactCurrency(
       decimalDigits: 0,
       symbol: '',
-      locale: 'en_US',
+      locale: 'en',
     ).format(number);
   }
 }

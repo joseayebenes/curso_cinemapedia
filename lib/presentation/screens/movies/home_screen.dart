@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/presentation/providers/providers.dart';
+import 'package:myapp/presentation/screens/widgets/shared/full_screen_loader.dart';
 import 'package:myapp/presentation/screens/widgets/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -36,6 +37,9 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final initialLoading = ref.watch(initialLoadingProvider);
+    if (initialLoading) return const FullScreenLoader();
+
     final slideshowMovies = ref.watch(moviesSlideShowProvider);
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final popularMovies = ref.watch(popularMoviesProvider);
@@ -58,31 +62,42 @@ class _HomeViewState extends ConsumerState<_HomeView> {
                   movies: nowPlayingMovies,
                   title: 'En cines',
                   subtitle: 'Lunes 20',
-                  loadNextPage: () => ref
-                      .read(nowPlayingMoviesProvider.notifier)
-                      .loadNextPage(),
+                  loadNextPage:
+                      () =>
+                          ref
+                              .read(nowPlayingMoviesProvider.notifier)
+                              .loadNextPage(),
                 ),
                 MovieHorizontalListview(
                   movies: popularMovies,
                   title: 'Populares',
-                  loadNextPage: () =>
-                      ref.read(popularMoviesProvider.notifier).loadNextPage(),
+                  loadNextPage:
+                      () =>
+                          ref
+                              .read(popularMoviesProvider.notifier)
+                              .loadNextPage(),
                 ),
                 MovieHorizontalListview(
                   movies: upcomingMovies,
                   title: 'Próximamente',
-                  loadNextPage: () =>
-                      ref.read(upcomingMoviesProvider.notifier).loadNextPage(),
+                  loadNextPage:
+                      () =>
+                          ref
+                              .read(upcomingMoviesProvider.notifier)
+                              .loadNextPage(),
                 ),
                 MovieHorizontalListview(
                   movies: topRatedMovies,
                   title: 'Mejor valoradas',
-                  loadNextPage: () =>
-                      ref.read(topRatedMoviesProvider.notifier).loadNextPage(),
+                  loadNextPage:
+                      () =>
+                          ref
+                              .read(topRatedMoviesProvider.notifier)
+                              .loadNextPage(),
                 ),
               ],
             );
-          }, childCount: 10),
+          }, childCount: 1),
         ),
       ],
     );

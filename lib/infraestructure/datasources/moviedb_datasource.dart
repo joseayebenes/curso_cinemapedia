@@ -3,6 +3,7 @@ import 'package:myapp/config/constants/environment.dart';
 import 'package:myapp/domain/datasources/movies_datasource.dart';
 import 'package:myapp/domain/entities/movies.dart';
 import 'package:myapp/infraestructure/mappers/movie_mapper.dart';
+import 'package:myapp/infraestructure/models/moviedb/movie_details.dart';
 import 'package:myapp/infraestructure/models/moviedb/moviedb_response.dart';
 
 class MoviedbDatasource extends MoviesDatasource {
@@ -18,12 +19,13 @@ class MoviedbDatasource extends MoviesDatasource {
 
   List<Movie> _jsonToMovies(Map<String, dynamic> json) {
     final movieDbResponse = MovieDbResponse.fromJson(json);
-    final List<Movie> movies = movieDbResponse.results
-        .where(
-          (moviedb) => moviedb.posterPath != 'no-poster',
-        ) // Elimina las películas sin poster
-        .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
-        .toList();
+    final List<Movie> movies =
+        movieDbResponse.results
+            .where(
+              (moviedb) => moviedb.posterPath != 'no-poster',
+            ) // Elimina las películas sin poster
+            .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
+            .toList();
     return movies;
   }
 
@@ -62,5 +64,19 @@ class MoviedbDatasource extends MoviesDatasource {
       queryParameters: {'page': page},
     );
     return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<Movie> getMovieById(String id) async {
+    final response = await dio.get('/movie/$id');
+    if (response.statusCode != 200) {
+      throw Exception('Movie with id: $id not found');
+    }
+
+    final movieDb = MovieDetails.fromJson(response.data);
+
+    final movie = MovieMapper.movieDetailsToEntity(movieDb);
+
+    return movie;
   }
 }
