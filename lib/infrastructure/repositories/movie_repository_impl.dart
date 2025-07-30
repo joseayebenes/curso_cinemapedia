@@ -1,10 +1,9 @@
 import 'package:myapp/domain/datasources/movies_datasource.dart';
-import 'package:myapp/domain/entities/movies.dart';
-import 'package:myapp/domain/repositories/movies_repositories.dart';
+import 'package:myapp/domain/entities/movie.dart';
+import 'package:myapp/domain/repositories/movies_repository.dart';
 
 class MovieRepositoryImpl extends MoviesRepository {
   final MoviesDatasource datasource;
-
   MovieRepositoryImpl(this.datasource);
 
   @override
@@ -13,8 +12,8 @@ class MovieRepositoryImpl extends MoviesRepository {
   }
 
   @override
-  Future<List<Movie>> getPopulars({int page = 1}) {
-    return datasource.getPopulars(page: page);
+  Future<List<Movie>> getPopular({int page = 1}) {
+    return datasource.getPopular(page: page);
   }
 
   @override
@@ -25,5 +24,10 @@ class MovieRepositoryImpl extends MoviesRepository {
   @override
   Future<List<Movie>> getUpcoming({int page = 1}) {
     return datasource.getUpcoming(page: page);
+  }
+
+  @override
+  Future<Movie> getMovieById(String id) {
+    return datasource.getMovieById(id);
   }
 }

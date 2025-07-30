@@ -1,6 +1,6 @@
+import 'package:myapp/infrastructure/datasources/moviedb_datasource.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myapp/infraestructure/datasources/moviedb_datasource.dart';
-import 'package:myapp/infraestructure/repositories/movie_repository_impl.dart';
+import 'package:myapp/infrastructure/repositories/movie_repository_impl.dart';
 
 // Este repositorio es inmutable
 final movieRepositoryProvider = Provider((ref) {

@@ -1,29 +1,32 @@
+import 'package:myapp/infrastructure/models/moviedb/movie_details.dart';
 import 'package:dio/dio.dart';
+
 import 'package:myapp/config/constants/environment.dart';
 import 'package:myapp/domain/datasources/movies_datasource.dart';
-import 'package:myapp/domain/entities/movies.dart';
-import 'package:myapp/infraestructure/mappers/movie_mapper.dart';
-import 'package:myapp/infraestructure/models/moviedb/moviedb_response.dart';
+
+import 'package:myapp/infrastructure/mappers/movie_mapper.dart';
+import 'package:myapp/infrastructure/models/moviedb/moviedb_response.dart';
+import 'package:myapp/domain/entities/movie.dart';
 
 class MoviedbDatasource extends MoviesDatasource {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'https://api.themoviedb.org/3',
       queryParameters: {
-        'api_key': Environment.theMovieDBKey,
-        'language': 'es_ES',
+        'api_key': Environment.theMovieDbKey,
+        'language': 'es-MX',
       },
     ),
   );
 
   List<Movie> _jsonToMovies(Map<String, dynamic> json) {
-    final movieDbResponse = MovieDbResponse.fromJson(json);
-    final List<Movie> movies = movieDbResponse.results
-        .where(
-          (moviedb) => moviedb.posterPath != 'no-poster',
-        ) // Elimina las películas sin poster
+    final movieDBResponse = MovieDbResponse.fromJson(json);
+
+    final List<Movie> movies = movieDBResponse.results
+        .where((moviedb) => moviedb.posterPath != 'no-poster')
         .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
         .toList();
+
     return movies;
   }
 
@@ -38,11 +41,12 @@ class MoviedbDatasource extends MoviesDatasource {
   }
 
   @override
-  Future<List<Movie>> getPopulars({int page = 1}) async {
+  Future<List<Movie>> getPopular({int page = 1}) async {
     final response = await dio.get(
       '/movie/popular',
       queryParameters: {'page': page},
     );
+
     return _jsonToMovies(response.data);
   }
 
@@ -52,6 +56,7 @@ class MoviedbDatasource extends MoviesDatasource {
       '/movie/top_rated',
       queryParameters: {'page': page},
     );
+
     return _jsonToMovies(response.data);
   }
 
@@ -61,6 +66,18 @@ class MoviedbDatasource extends MoviesDatasource {
       '/movie/upcoming',
       queryParameters: {'page': page},
     );
+
     return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<Movie> getMovieById(String id) async {
+    final response = await dio.get('/movie/$id');
+    if (response.statusCode != 200)
+      throw Exception('Movie with id: $id not found');
+
+    final movieDetails = MovieDetails.fromJson(response.data);
+    final Movie movie = MovieMapper.movieDetailsToEntity(movieDetails);
+    return movie;
   }
 }

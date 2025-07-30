@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myapp/domain/entities/movies.dart';
-import 'package:myapp/presentation/providers/movies/movies_providers.dart';
+import 'package:myapp/domain/entities/movie.dart';
 
-final moviesSlideShowProvider = Provider<List<Movie>>((ref) {
-  final nowPlatingMovies = ref.watch(nowPlayingMoviesProvider);
-  if (nowPlatingMovies.isEmpty) {
-    return const [];
-  } else {
-    return nowPlatingMovies.sublist(0, 6);
-  }
+import 'movies_providers.dart';
+
+final moviesSlideshowProvider = Provider<List<Movie>>((ref) {
+  final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
+
+  if (nowPlayingMovies.isEmpty) return [];
+
+  return nowPlayingMovies.sublist(0, 6);
 });
